@@ -34,7 +34,6 @@ BAIDUTONGJI_SITEID=      #百度统计（可选)
 ## Build
 
 ```console
-mv .env.sample .env
 yarn build
 ```
 
