@@ -1,0 +1,30 @@
+.gaia-mobile-v2-portal-announcement-container,
+.gaia-mobile-v2-portal-appwidget-container,
+.gaia-mobile-v2-portal-spacewidget-container {
+  display: none;
+}
+
+.van-hairline--top-bottom::after,
+.van-hairline-unset--top-bottom::after {
+  border-width: 0;
+}
+
+.gaia-mobile-v2-viewpanel-header {
+  background-color: #4b4b4b;
+}
+
+.gaia-mobile-v2-viewpanel-contents {
+  border-radius: 0;
+}
+
+.van-tabbar {
+  width: 100vw;
+}
+
+.van-tabbar--fixed {
+  left: unset;
+}
+
+.gaia-mobile-v2-portal-header-container .gaia-mobile-v2-portal-header::after {
+  background: none;
+}
