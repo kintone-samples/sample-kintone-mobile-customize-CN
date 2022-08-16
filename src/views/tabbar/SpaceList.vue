@@ -1,25 +1,10 @@
 <template>
   <van-pull-refresh v-model="refreshing" disabled @refresh="onRefresh">
-    <van-skeleton
-      title
-      avatar
-      :row="3"
-      :loading="loading"
-      avatar-size="48px"
-      round
-      avatar-shape="square"
-      class="skeleton"
-    >
+    <van-skeleton title avatar :row="3" :loading="loading" avatar-size="48px" round avatar-shape="square"
+      class="skeleton">
       <div ref="spaceList">
-        <van-list
-          v-model="loading"
-          class="app"
-          :finished="finished"
-          finished-text="没有更多了"
-          :error.sync="error"
-          error-text="请求失败，点击重新加载"
-          @load="onLoad"
-        >
+        <van-list v-model="loading" class="app" :finished="finished" finished-text="没有更多了" :error.sync="error"
+          error-text="请求失败，点击重新加载" @load="onLoad">
           <van-collapse v-for="(item, index) in spaceList" :key="index" v-model="activeNames" accordion size="large">
             <van-collapse-item class="spacelist-item" :name="item.id">
               <template #title>
@@ -116,7 +101,15 @@ export default {
       this.onLoad()
     },
     goto(val) {
-      window.location.href = `/k/m/space/${val}#`
+      let url = ''
+      for (let i = 0; i < this.spaceList.length; i++) {
+        if (this.spaceList[i].id === val) {
+          const spaceInfo = this.spaceList[i]
+          url = spaceInfo.isGuest ? `/k/guest/${val}/m/space/${val}/thread/${spaceInfo.defaultThread}` : `/k/m/space/${val}#`
+          break
+        }
+      }
+      window.location.href = url
     },
   },
 }

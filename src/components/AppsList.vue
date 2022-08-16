@@ -3,7 +3,7 @@
     <a
       v-for="(appinfo, appindex) in apps"
       :key="appindex"
-      :href="`/k/m/${appinfo.appId}`"
+      :href="appinfo.url"
       :class="['appitem-a', { 'active-class': nowIndex === appindex }]"
       @click="active(appindex)"
     >

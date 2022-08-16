@@ -1,8 +1,8 @@
 // 获取空间应用列表
-export const GetSpaceAppsInfo = async (id) => {
-  const spaceInfo = await GetSpaceInfo(id).catch(() => {})
+export const GetSpaceAppsInfo = async (id, isGuest) => {
+  const spaceInfo = await GetSpaceInfo(id, isGuest).catch(() => {})
   const appIds = spaceInfo.attachedApps.map((app) => app.appId)
-  return GetAppInfo(appIds)
+  return GetAppInfo(appIds, isGuest, id)
     .then((appsInfo) => {
       spaceInfo.apps = appsInfo
       return spaceInfo
@@ -19,7 +19,7 @@ export const GetMySpacesList = async (offset, size) => {
     })
     .catch(() => {})
   const { items, hasMore } = mySpaces.result
-  const promiseArray = items.map((item) => GetSpaceInfo(item.id).catch(() => {}))
+  const promiseArray = items.map((item) => GetSpaceInfo(item.id, item.isGuest).catch(() => {}))
   const spaceList = await Promise.all(promiseArray).catch(() => {})
   return { spaceList, hasMore }
 }
@@ -28,7 +28,9 @@ export const GetMySpacesList = async (offset, size) => {
 export const GetMySpacesWithApps = async (offset, size) => {
   const mySpaces = await GetMySpacesList(offset, size).catch(() => {})
   const { spaceList, hasMore } = mySpaces
-  const promiseArray = spaceList.map((item) => GetSpaceAppsInfo(item.id))
+  const promiseArray = spaceList.map((item) => {
+    return GetSpaceAppsInfo(item.id, item.isGuest)
+  })
   return Promise.all(promiseArray)
     .then((spaceAppsArray) => {
       return { spaceList: spaceAppsArray, hasMore }
@@ -37,20 +39,24 @@ export const GetMySpacesWithApps = async (offset, size) => {
 }
 
 // 获取空间信息
-export const GetSpaceInfo = (id) => {
+export const GetSpaceInfo = (id, isGuest) => {
   const body = {
     id,
   }
-  return kintone.api(kintone.api.url('/k/v1/space.json', true), 'GET', body)
+  const url = isGuest ? `/k/guest/${id}/v1/space.json` : '/k/v1/space.json'
+  return kintone.api(kintone.api.url(url, true), 'GET', body)
 }
 
 // 获取应用信息
-export const GetAppInfo = (appIds) => {
+export const GetAppInfo = (appIds, isGuest, spaceId) => {
   return kintone.api(kintone.api.url('/k/api/app/list.json'), 'POST', { apps: appIds }).then((resp) => {
     const applist = resp.result.appList
+    const preUrl = isGuest ? `/k/guest/${spaceId}/m/` : `/k/m/`
     return applist.map((app) => {
       return {
         appId: app.id,
+        isGuest: isGuest,
+        url: `${preUrl}${app.id}/`,
         appIcon: app.icons.NORMAL,
         appName: app.name,
       }
@@ -79,11 +85,46 @@ export const GetRecords = (app, query) => {
   return kintone.api(kintone.api.url('/k/v1/records.json', true), 'GET', options)
 }
 
+// 通过游标批量获取记录- 创建游标
+export const CreateCursor = (app, query, size = 500) => {
+  const options = {
+    app,
+    query,
+    size,
+  }
+  return kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'POST', options)
+}
+// 通过游标批量获取记录- 获取数据
+export const GetCursorRecords = (id) => {
+  const options = {
+    id,
+  }
+  return kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'GET', options)
+}
+// 通过游标批量获取记录- 删除游标
+export const DeleteCursor = (id) => {
+  const options = {
+    id,
+  }
+  return kintone.api(kintone.api.url('/k/v1/records/cursor', true), 'DELETE', options)
+}
+
 // 更新值为唯一的指定记录
 export const UpdateRecord = (app, updateKey, record) => {
   const body = {
     app,
     updateKey,
+    record,
+  }
+
+  return kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', body)
+}
+
+// 通过$id更新记录
+export const UpdateRecordById = (app, id, record) => {
+  const body = {
+    app,
+    id,
     record,
   }
 
@@ -137,14 +178,27 @@ export const GetRecordSteps = (app, record) => {
   return kintone.api(kintone.api.url('/k/api/status/getHistory.json', true), 'POST', body)
 }
 
-//获取所有应用（暂时100条）
+//获取所有应用
 export const GetAppsList = () => {
   const body = {
-    excludeUnrelatedApps: true,
+    excludeUnrelatedApps: false,
     includeCreatorInfo: false,
     includeGuestInfo: true,
     offset: 0,
     size: 1000,
   }
   return kintone.api(kintone.api.url('/k/api/app/list.json', true), 'POST', body)
+}
+
+//bookmark 收藏
+export const GetStar = () => {
+  return kintone.api(kintone.api.url('/k/api/bookmark/list.json', true), 'POST', {})
+}
+
+//获取流程设置
+export const GetStatus = (app) => {
+  const body = {
+    app,
+  }
+  return kintone.api(kintone.api.url('/k/v1/app/status.json', true), 'GET', body)
 }
