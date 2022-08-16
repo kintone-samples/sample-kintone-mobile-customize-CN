@@ -51,12 +51,4 @@ yarn build
   - 未处理 
 
 ## Screenshots
-![image](snapshots/home.png) ![image](snapshots/contacts.png) ![image](snapshots/space.png)  
-
-![image](snapshots/cards.png) ![image](snapshots/calendar.png) ![image](snapshots/todo.png)
-
-
-
-
-
-
+![image](snapshots/home.png) ![image](snapshots/contacts.png) ![image](snapshots/space.png) ![image](snapshots/cards.png) ![image](snapshots/calendar.png) ![image](snapshots/todo.png)
