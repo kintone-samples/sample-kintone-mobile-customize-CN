@@ -23,9 +23,9 @@ mv .env.sample .env
 complete .env
 
 ### kintone portal setting Info (serve mode)
-https://localhost:8080/js/chunk-vendors.js 
-https://localhost:8080/js/app.js 
-https://localhost:8080/js/app-router.js 
+https://localhost:8080/js/chunk-vendors.js   
+https://localhost:8080/js/app.js    
+https://localhost:8080/js/app-router.js    
 
 ## Build
 
