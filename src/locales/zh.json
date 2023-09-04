@@ -1,0 +1,58 @@
+{
+  "Tab": {
+    "home": "门户",
+    "contacts": "通讯录",
+    "space": "空间",
+    "star": "收藏",
+    "todo": "待办"
+  },
+  "Home": {
+    "gridApps": {
+      "allApps": "全部应用"
+    },
+    "statistics": {
+      "eachSalesVolume": "各个平台的销售数据",
+      "unit": "万套",
+      "shoppingDaySalesVolume": "11.11销售额",
+      "totalSalesVolume": "总销售额",
+      "profit": "净利润"
+    }
+  },
+  "AppsDraggable": {
+    "homeShow": "首页展示应用",
+    "allApps": "所有应用",
+    "noApps": "暂无应用",
+    "noSubApps": "请从全部应用中添加应用"
+  },
+  "Contactse": {},
+  "SpaceList": {
+    "noMore": "没有更多了"
+  },
+  "Star": {
+    "noBookmarks": "暂无书签",
+    "recordList": "记录列表",
+    "recordDetail": "记录的详情",
+    "searchResult": "搜索结果",
+    "other": "其他",
+    "apps": "应用"
+  },
+  "Todo": {
+    "myCalendar": "我的日程",
+    "todo": "未处理"
+  },
+  "TodoAssigned": {
+    "noTodo": "没有未处理"
+  },
+  "TodoCalendarList": {
+    "myCalendar": "我的日程",
+    "noCalendar": "暂无日程",
+    "share": "共享"
+  },
+  "KintoneSearch": {
+    "hint": "请输入搜索关键词"
+  },
+  "ErrorInfo": {
+    "requestFailed": "请求失败",
+    "failedRetry": "请求失败，点击重新加载"
+  }
+}

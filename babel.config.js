@@ -1,14 +1,6 @@
 module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        modules: false,
-      },
-    ],
-  ],
+  presets: ['@vue/cli-plugin-babel/preset'],
   plugins: [
-    '@babel/plugin-proposal-class-properties',
     [
       'import',
       {
@@ -18,16 +10,6 @@ module.exports = {
         style: (name) => `${name}/style/less`,
       },
       'vant',
-    ],
-    [
-      '@babel/plugin-transform-runtime',
-      {
-        corejs: {
-          version: 3,
-          proposals: true,
-        },
-        useESModules: true,
-      },
     ],
   ],
 }

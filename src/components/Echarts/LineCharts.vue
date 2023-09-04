@@ -1,18 +1,28 @@
 <template>
-  <div ref="linecharts" class="echarts-line-charts"></div>
+  <v-chart class="echarts-line-charts" :option="option" />
 </template>
 
 <script>
-import { GetRecords } from '@/services/kintoneApi'
+import { GetOneAppInfo, GetRecords, GetFormFields } from '@/services/kintoneApi'
 import { config } from '@/config'
 
+import {
+  useEChartOption,
+  DimensionType,
+  MetricType,
+  useLineArea
+} from 'echarts-composables'
+
+
 const app = config.lineCharts
-const query = 'order by date asc limit 11'
+const query = 'order by month asc limit 11'
 
 export default {
+  name: "LineCharts",
+
   data() {
     return {
-      line: {},
+      option: {},
     }
   },
 
@@ -21,116 +31,98 @@ export default {
   },
 
   methods: {
-    initEcharts() {
-      GetRecords(app, query)
-        .then((resp) => {
-          const { records } = resp
-          const xDate = records.map((record) => {
-            return record.date.value.slice(5)
-          })
-          const ySales = records.map((record) => {
-            return [
-              record.channel1.value,
-              record.channel2.value,
-              record.channel3.value,
-              record.channel4.value,
-              record.channel5.value,
-            ].reduce((prev, item) => {
-              return parseInt(prev, 10) + parseInt(item, 10)
-            })
-          })
-          this.line = {
-            tooltip: {
-              trigger: 'axis',
-              axisPointer: {
-                // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-              },
-            },
-            // 标题
-            title: {
-              left: 'center',
-              text: '双十一销售额',
-              top: '10',
-              textStyle: {
-                fontSize: 20,
-                color: '#5c6168',
-              },
-            },
-            grid: {
-              width: '78%',
-              left: '15%',
-              height: '46%',
-            },
-            // x轴
-            xAxis: {
-              type: 'category',
-              data: xDate,
-              axisLabel: {
-                fontSize: 10,
-                fontWeight: 'normal',
-                margin: 14,
-                color: '#5c6168',
-              },
-              axisLine: {
-                onZero: false,
-                lineStyle: {
-                  width: 0,
-                },
-              },
-              axisTick: {
-                show: false,
-              },
-            },
-            // y轴
-            yAxis: {
-              name: '万元',
-              nameTextStyle: {
-                fontSize: 14,
-                color: '#5c6168',
-                fontWeight: 'normal',
-                align: 'right',
-                lineHeight: 50,
-              },
-              offset: -5,
-              type: 'value',
-              axisLabel: {
-                fontSize: 10,
-                fontWeight: 'normal',
-                color: '#5c6168',
-                margin: 14,
-                // fontStyle: 'oblique',
-              },
-              splitLine: {
-                show: true,
-                lineStyle: {
-                  color: '#4f90be',
-                  type: [3, 4],
-                  dashOffset: 5,
-                  width: 1,
-                },
-              },
-              min: 10,
-              minInterval: 10,
-            },
-            // 数据
-            series: [
-              {
-                data: ySales,
-                type: 'line',
-                color: '#65a3d3',
-                symbol: 'circle',
-                symbolSize: 6,
-                lineStyle: {
-                  width: 3,
-                },
-              },
-            ],
-          }
-          const myEcharts = this.$echarts.init(this.$refs.linecharts)
-          myEcharts.setOption(this.line)
+    async initEcharts() {
+
+      const dimensions = [
+        {
+          key: 'month',
+          visual: DimensionType.CategoryAxis,
+        },
+        {
+          key: 'type',
+          visual: DimensionType.Series,
+        },
+        {
+          key: 'value',
+          visual: DimensionType.Series,
+        },
+      ]
+
+      const metrics = [
+        {
+          key: 'value',
+          visual: MetricType.Line,
+        },
+      ]
+
+      const meta = [
+        { key: 'channel1', alias: 'Garoon' },
+        { key: 'channel2', alias: 'Mailwise' },
+        { key: 'channel3', alias: 'kintone' },
+        { key: 'channel4', alias: 'Office' },
+      ]
+
+      const resp = await GetRecords(app, query)
+      const appInfo = await GetOneAppInfo(app)
+      //通过表单设置获取单位，产品名称
+      const formSetting = await GetFormFields(app)
+      // console.log(formSetting)
+      const { records } = resp
+      // console.log(records)
+
+      let dataset = []
+      for (const item of records) {
+        const { month, channel1, channel2, channel3, channel4 } = item
+        dataset.push({
+          month: month.value,
+          type: 'channel1',
+          value: channel1.value
         })
-        .catch(() => {})
+        dataset.push({
+          month: month.value,
+          type: 'channel2',
+          value: channel2.value
+        })
+        dataset.push({
+          month: month.value,
+          type: 'channel3',
+          value: channel3.value
+        })
+        dataset.push({
+          month: month.value,
+          type: 'channel4',
+          value: channel4.value
+        })
+      }
+
+      const addons = [
+        useLineArea()
+      ]
+      // console.log('dataset', dataset)
+
+      const echartsOptions = useEChartOption({
+        dataset, dimensions, metrics, meta, addons
+      })
+      // console.log('echartsOptions', echartsOptions)
+      //删除legend属性
+      // delete echartsOptions.legend
+      echartsOptions.series = echartsOptions.series.map(r => {
+        r.smooth = true
+        return r
+      })
+
+      echartsOptions.title = {
+        left: 'auto',
+        text: appInfo.name,
+        top: '10',
+        textStyle: {
+          fontSize: 18,
+          color: '#5c6168',
+        },
+      }
+
+
+      this.option = echartsOptions
     },
   },
 }
@@ -143,5 +135,6 @@ export default {
  */
 .echarts-line-charts {
   height: 20rem;
+  padding: 10px;
 }
 </style>

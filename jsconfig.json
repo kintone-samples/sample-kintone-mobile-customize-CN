@@ -1,9 +1,25 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "target": "es5",
+    "module": "esnext",
+    "baseUrl": "./",
+    "moduleResolution": "node",
     "paths": {
-      "@/*": ["src/*"],
-      "_tabbar/*": ["src/views/tabbar/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "_tabbar/*": [
+        "src/views/tabbar/*"
+      ],
+      "_vuex/*": [
+        "src/vuex/modules/*"
+      ],
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
   }
 }

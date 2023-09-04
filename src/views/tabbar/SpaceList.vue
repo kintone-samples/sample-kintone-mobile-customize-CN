@@ -3,19 +3,22 @@
     <van-skeleton title avatar :row="3" :loading="loading" avatar-size="48px" round avatar-shape="square"
       class="skeleton">
       <div ref="spaceList">
-        <van-list v-model="loading" class="app" :finished="finished" finished-text="没有更多了" :error.sync="error"
-          error-text="请求失败，点击重新加载" @load="onLoad">
+        <van-list v-model="loading" class="app" :finished="finished" :finished-text="$t('SpaceList.noMore')"
+          :error.sync="error" :error-text="$t('ErrorInfo.failedRetry')" @load="onLoad">
           <van-collapse v-for="(item, index) in spaceList" :key="index" v-model="activeNames" accordion size="large">
-            <van-collapse-item class="spacelist-item" :name="item.id">
-              <template #title>
-                <div class="spacelist-item-link" @click.stop="goto(item.id)">
-                  <van-image class="spacelist-item-link-icon" fit="cover" radius="5" :src="item.coverUrl" />
-                  <span class="spacelist-item-link-text van-ellipsis">{{ item.name }}</span>
-                </div>
-                <div class="van-multi-ellipsis--l3 spacelist-item-wrap">{{ item.body | filterHtml }}</div>
-              </template>
-              <apps-list :apps="item.apps" />
-            </van-collapse-item>
+            <div style="position: relative">
+              <van-collapse-item class="spacelist-item " :name="item.id">
+                <template #title>
+                  <div :class="[{ 'overlay': item.isGuest }]"></div>
+                  <div class="spacelist-item-link" @click.stop="goto(item.id)">
+                    <van-image class="spacelist-item-link-icon" fit="cover" radius="5" :src="item.coverUrl" />
+                    <span class="spacelist-item-link-text van-ellipsis">{{ item.name }}</span>
+                  </div>
+                  <div class="van-multi-ellipsis--l3 spacelist-item-wrap">{{ item.body | filterHtml }}</div>
+                </template>
+                <apps-list :apps="item.apps" />
+              </van-collapse-item>
+            </div>
           </van-collapse>
         </van-list>
       </div>
@@ -32,7 +35,6 @@ import appsList from '@/components/AppsList.vue'
 BScroll.use(ObserveDOM)
 
 const size = 5
-const spaceDefaultInfo = '这是一个空间'
 
 export default {
   name: 'spaceList',
@@ -41,7 +43,7 @@ export default {
   },
   filters: {
     filterHtml(val) {
-      if (val === null) return spaceDefaultInfo
+      if (val === null) return ''
       return val.replace(/<[^>]*>/g, '')
     },
   },
@@ -62,17 +64,8 @@ export default {
     this.$refs.spaceList.style.height = `${height - 144}px`
   },
   methods: {
-    getMySpaces(offset) {
-      return GetMySpacesWithApps(offset, size)
-    },
     onLoad() {
-      if (this.refreshing) {
-        this.spaceList = []
-        this.offset = 0
-        this.hasMore = false
-        this.refreshing = false
-      }
-      this.getMySpaces(this.offset)
+      GetMySpacesWithApps(this.offset)
         .then((resp) => {
           const { spaceList, hasMore } = resp
           this.spaceList = [...this.spaceList, ...spaceList]

@@ -6,6 +6,7 @@
       <p>{{item.assignees[0].name}}</p>
       <p>{{item.dateTime}}</p>
     </van-step>
+  </van-steps>
 </template>
 
 <script>

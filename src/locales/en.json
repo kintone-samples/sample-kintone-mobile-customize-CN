@@ -1,0 +1,57 @@
+{
+  "AppsDraggable": {
+    "allApps": "All apps",
+    "homeShow": "Home display apps",
+    "noApps": "No application yet",
+    "noSubApps": "Please add an app from all apps"
+  },
+  "ErrorInfo": {
+    "failedRetry": "Request failed, click to reload",
+    "requestFailed": "Request failed"
+  },
+  "Home": {
+    "gridApps": {
+      "allApps": "All"
+    },
+    "statistics": {
+      "eachSalesVolume": "Sales data for each platform",
+      "profit": "Net profit",
+      "shoppingDaySalesVolume": "11.11 Sales",
+      "totalSalesVolume": "Total sales",
+      "unit": "k sets"
+    }
+  },
+  "KintoneSearch": {
+    "hint": "Enter search keywords"
+  },
+  "SpaceList": {
+    "noMore": "No more"
+  },
+  "Star": {
+    "apps": "application",
+    "noBookmarks": "No bookmarks yet",
+    "other": "other",
+    "recordDetail": "record details",
+    "recordList": "record list",
+    "searchResult": "Search results"
+  },
+  "Tab": {
+    "contacts": "Contacts",
+    "home": "Portal",
+    "space": "Spaces",
+    "star": "Favorites",
+    "todo": "Tasks"
+  },
+  "Todo": {
+    "myCalendar": "Sschedule",
+    "todo": "Unprocessed"
+  },
+  "TodoAssigned": {
+    "noTodo": "No pending"
+  },
+  "TodoCalendarList": {
+    "myCalendar": "Schedule",
+    "noCalendar": "No schedule",
+    "share": "Shared"
+  }
+}

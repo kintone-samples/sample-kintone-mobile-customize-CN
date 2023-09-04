@@ -1,26 +1,17 @@
 <template>
   <div class="item-shadow">
-    <van-empty v-if="error" description="请求失败" />
-    <van-empty v-else-if="list.length === 0 && loaded" description="没有未处理" />
-    <van-cell
-      v-else
-      v-for="(item, index) in list"
-      :key="index"
-      class="item"
-      size="large"
-      value-class="assignedcount-badge"
-      title-class="title van-ellipsis"
-      center
-      :value="item.count"
-      is-link
-      :url="item.id + '/?bview=ASSIGN#/'"
-    >
-      <!-- 使用 title 插槽来自定义标题 -->
-      <template #title>
-        <van-image class="item-link-icon" fit="cover" radius="5" :src="item.icon" />
-        <span class="item-link-text">{{ item.name }}</span>
-      </template>
-    </van-cell>
+    <van-empty v-if="error" :description="$t('ErrorInfo.requestFailed')" />
+    <van-empty v-else-if="list.length === 0 && loaded" :description="$t('TodoAssigned.noTodo')" />
+    <div v-else>
+      <van-cell v-for="(item, index) in list" :key="index" class="item" size="large" value-class="assignedcount-badge"
+        title-class="title van-ellipsis" center :value="item.count" is-link :url="item.id + '/?bview=ASSIGN#/'">
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template #title>
+          <van-image class="item-link-icon" fit="cover" radius="5" :src="item.icon" />
+          <span class="item-link-text">{{ item.name }}</span>
+        </template>
+      </van-cell>
+    </div>
   </div>
 </template>
 

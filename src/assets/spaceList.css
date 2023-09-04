@@ -42,3 +42,15 @@
 .skeleton {
   padding-top: 10px;
 }
+
+.overlay {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  z-index:111;
+  display: block;
+  width: 24px;
+  height: 24px;
+  background: url(	https://static.cybozu.com/contents/k/image/argo/uiparts/panel/guest.png) no-repeat left top;
+  content: "";
+}

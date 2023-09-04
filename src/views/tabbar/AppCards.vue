@@ -1,7 +1,7 @@
 <template>
   <div ref="appcards" class="container-water-fall waterfall">
-    <van-empty v-if="error" description="请求失败" />
-    <waterfall v-else :col="col" :data="list" @loadmore="loadmore" @scroll="refresh">
+    <van-empty v-if="error" :description="$t('ErrorInfo.requestFailed')" />
+    <waterfall v-else :col="col" :data="list" @loadmore="loadmore">
       <div v-for="(item, index) in list" :key="index" class="cell-item appitem">
         <div class="item-body">
           <a :href="item['Link'].value | toMobileUrl">
@@ -19,7 +19,7 @@ import { GetRecords } from '@/services/kintoneApi'
 import { config } from '@/config'
 
 const appid = config.appCards
-const limit = 20
+const limit = 50
 
 export default {
   name: 'appcards',
@@ -39,12 +39,6 @@ export default {
       error: false,
     }
   },
-  computed: {
-    message() {
-      const message = '--没有更多内容啦--'
-      return this.finished ? message : ''
-    },
-  },
   created() {
     this.getRecords(this.offset)
       .then((resp) => {
@@ -60,17 +54,6 @@ export default {
     getRecords(offset) {
       const query = `order by sort desc limit ${limit} offset ${offset}`
       return GetRecords(appid, query)
-    },
-    refresh() {
-      this.getRecords(0)
-        .then((resp) => {
-          const { records } = resp
-          this.list = records
-          this.offset += records.length
-        })
-        .catch(() => {
-          this.error = true
-        })
     },
     loadmore() {
       this.getRecords(this.offset)
@@ -88,7 +71,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .waterfall {
   margin: 0 5px;
 }

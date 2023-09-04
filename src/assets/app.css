@@ -28,3 +28,10 @@
 .gaia-mobile-v2-portal-header-container .gaia-mobile-v2-portal-header::after {
   background: none;
 }
+
+
+.group-module-background {
+  background-color: rgba(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0 0 5px 0 #ced3d4;
+}

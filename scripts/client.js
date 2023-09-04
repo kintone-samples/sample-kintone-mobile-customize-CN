@@ -99,22 +99,24 @@ module.exports = class Client {
     }
   }
 
-  async customizeFiles(appid, targetDir, cover) {
+  async customizeFiles(targetDir, cover) {
     try {
       const arr = await this.upload(await getFiles(targetDir), cover)
       const cb = (scripts) => {
         const template = new Map()
+
         scripts.forEach((file) => {
           let contentId
           const fileKeys = getFileKeys(template, file.type)
           if (file.locationType === 'BLOB') {
-            const index = arr.findIndex((el) => el.name === file.name && el.type === file.type)
-            if (index !== -1) {
-              contentId = arr[index].contentId
-              arr.splice(index, 1)
-            }
+            // const index = arr.findIndex((el) => el.name === file.name && el.type === file.type)
+            // if (index !== -1) {
+            //   contentId = arr[index].contentId
+            //   arr.splice(index, 1)
+            // }
           }
-          fileKeys.push(file.locationType === 'BLOB' ? contentId || file.contentId : file.contentUrl)
+          // fileKeys.push(file.locationType === 'BLOB' ? contentId || file.contentId : file.contentUrl)
+          // console.log(fileKeys)
         })
         arr.forEach((file) => getFileKeys(template, file.type).push(file.contentId))
         return Array.from(template.values())

@@ -1,17 +1,14 @@
 <template>
   <div ref="box" class="box">
-    <van-empty v-if="error" description="请求失败" />
+    <van-empty v-if="error" :description="$t('ErrorInfo.requestFailed')" />
     <div v-else ref="listView" class="list-view">
       <ul>
         <li v-for="(item, index) in list" :key="index" ref="listGroup" class="list-group">
           <h2 class="list-group-title">{{ item.name }}</h2>
           <ul>
-            <li
-              v-for="(v, i) in item.item"
-              :key="i"
+            <li v-for="(v, i) in item.item" :key="i"
               :class="['list-group-item', { 'active-class': nowIndex === index + '-' + i }]"
-              @click.stop="goto(v.code, index + '-' + i)"
-            >
+              @click.stop="goto(v.code, index + '-' + i)">
               <van-image radius="5" fit="cover" :src="v.photoUrl" />
               <span class="name">{{ v.name }}</span>
             </li>
@@ -20,15 +17,9 @@
       </ul>
       <div class="list-shortcut">
         <ul>
-          <li
-            v-for="(sitem, sindex) in shortcutList"
-            :key="sitem.id"
-            class="item"
-            :data-index="sindex"
-            :class="{ current: currentIndex === sindex }"
-            @touchstart="onShortcutStart"
-            @touchmove.stop.prevent="onShortcutMove"
-          >
+          <li v-for="(sitem, sindex) in shortcutList" :key="sitem.id" class="item" :data-index="sindex"
+            :class="{ current: currentIndex === sindex }" @touchstart="onShortcutStart"
+            @touchmove.stop.prevent="onShortcutMove">
             {{ sitem }}
           </li>
         </ul>
@@ -40,7 +31,8 @@
 <script>
 import BScroll from '@better-scroll/core'
 import { GetContacts } from '@/services/kintoneApi'
-import firstLetterSort from '@/utils/pinyinSort'
+import { firstLetterSort } from '@/utils/letterSort'
+import { jpFirstLetterSort } from '@/utils/jpLetterSort'
 
 export default {
   name: 'contacts',
@@ -83,21 +75,24 @@ export default {
       this.currentIndex = this.listHeight.length - 2
     },
   },
-  created() {
+  async created() {
     this.touch = {}
-    GetContacts()
-      .then((resp) => {
-        const data = resp.result.items
-        this.list = firstLetterSort(data, 'name')
-        setTimeout(() => {
-          this.setHeight()
-          this.initSrcoll()
-          this.calculateHeight()
-        }, 20)
-      })
-      .catch((resp) => {
-        this.error = true
-      })
+    const resp = await GetContacts().catch((resp) => {
+      this.error = true
+    })
+    const data = resp.result.items
+    const locale = kintone.getLoginUser().language
+    // if (locale === 'ja') {
+    //   this.list = await jpFirstLetterSort(data, 'name')
+    // } else {
+    //   this.list = firstLetterSort(data, 'name')
+    // }
+    this.list = firstLetterSort(data, 'name')
+    setTimeout(() => {
+      this.setHeight()
+      this.initSrcoll()
+      this.calculateHeight()
+    }, 20)
 
     // 初始化 better-scroll 必须要等 dom 加载完毕
   },

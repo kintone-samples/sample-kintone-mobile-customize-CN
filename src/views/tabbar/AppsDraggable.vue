@@ -1,54 +1,35 @@
 <template>
   <div class="container" v-bounce>
-    <van-empty v-if="error" description="请求失败" />
+    <van-empty v-if="error" :description="$t('ErrorInfo.requestFailed')" />
     <div v-else>
       <div class="switch">
-        <div class="title">首页展示应用</div>
-        <van-switch v-model="checked" size="24px" />
+        <div class="title">{{ $t("AppsDraggable.homeShow") }}</div>
+        <van-switch v-model="locked" size="24px" />
       </div>
 
-      <draggable
-        ref="subscribed"
-        v-model="subApps"
-        group="apps"
-        :class="['list', { 'no-data-subapps': noSubsApps }]"
-        :disabled="!checked"
-      >
-        <div
-          v-for="item in subApps"
-          :key="item.id"
-          :class="['item', { 'active-class': nowIndex === item.id }]"
-          @click="!checked && addClickStyle(item.id)"
-        >
+      <draggable ref="subscribed" v-model="subApps" group="apps" :data-no-subapps="noSubAppsMessage"
+        :class="['list', 'group-module-background', { 'no-data-subapps': noSubsApps }]" :disabled="!locked">
+        <div v-for="item in subApps" :key="item.id" :class="['item', { 'active-class': nowIndex === item.id }]"
+          @click="!locked && addClickStyle(item.id)">
           <van-image width="42" height="42" fit="contain" :src="item.icon" />
           <div class="appitem-link van-ellipsis">{{ item.name }}</div>
         </div>
       </draggable>
 
-      <div class="title">所有应用</div>
+      <div class="title">{{ $t("AppsDraggable.allApps") }}</div>
 
       <!-- 骨架屏 -->
-      <div v-if="loading" class="list">
+      <div v-if="loading" class="list group-module-background">
         <div class="item" v-for="(item, index) in 16" :key="index">
           <div class="loading-img"></div>
           <div class="loading-text"></div>
         </div>
       </div>
 
-      <draggable
-        v-else
-        ref="all"
-        v-model="allApps"
-        group="apps"
-        :class="['list', { 'no-data-allapps': noAllApps }]"
-        :disabled="!checked"
-      >
-        <div
-          v-for="item in allApps"
-          :key="item.id"
-          :class="['item', { 'active-class': nowIndex === item.id }]"
-          @click="!checked && addClickStyle(item.id)"
-        >
+      <draggable v-else ref="all" v-model="allApps" group="apps" :data-no-apps="noAppsMessage"
+        :class="['list', 'group-module-background', { 'no-data-allapps': noAllApps }]" :disabled="!locked">
+        <div v-for="item in allApps" :key="item.id" :class="['item', { 'active-class': nowIndex === item.id }]"
+          @click="!locked && addClickStyle(item.id)">
           <van-image width="42" height="42" fit="contain" :src="item.icon" />
           <div class="appitem-link van-ellipsis">{{ item.name }}</div>
         </div>
@@ -61,6 +42,7 @@
 import draggable from 'vuedraggable'
 import { GetAppsList } from '@/services/kintoneApi'
 import { mapActions } from 'vuex'
+import i18n from '@/libs/i18n'
 
 export default {
   name: 'appSubs',
@@ -83,17 +65,21 @@ export default {
     },
   },
   activated() {
-    this.checked = false
+    this.locked = false
     this.initApps()
   },
   data() {
     return {
       allApps: [],
-      checked: false,
+      locked: false,
       nowIndex: '',
       loading: false,
       noSubsApps: false,
       noAllApps: false,
+      error: false,
+      noAppsMessage: i18n.tc('AppsDraggable.noApps'),
+      noSubAppsMessage: i18n.tc('AppsDraggable.noSubApps'),
+
     }
   },
   watch: {
@@ -128,7 +114,7 @@ export default {
       }, 200)
     },
     async getAllApps() {
-      const apps = await GetAppsList().catch(() => {})
+      const apps = await GetAppsList().catch(() => { this.error = true })
       this.loading = false
       if (typeof apps == 'undefined') return []
       const result = apps.result.appList
@@ -143,7 +129,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style   scoped>
 .active-class {
   opacity: 1;
   animation: appactive 0.2s 1 normal;
@@ -168,7 +154,8 @@ export default {
 }
 
 .container::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
+  display: none;
+  /* Chrome Safari */
 }
 
 .switch {
@@ -196,9 +183,9 @@ export default {
   min-height: 100px;
   margin: 10px 10px 20px;
   padding: 5px 10px 0;
-  background-color: white;
+  /* background-color: white;
   border-radius: 10px;
-  box-shadow: 0 0 5px 0 #d1dce5;
+  box-shadow: 0 0 5px 0 #d1dce5; */
 }
 
 .item {
@@ -216,13 +203,34 @@ export default {
 }
 
 .no-data-subapps {
-  background: #fff url('https://cndevdemo.oss-cn-shanghai.aliyuncs.com/images/mobile-design/bg-subapps.png') center
-    center no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  color: #dcdcdc;
+  font-size: 16px;
+  letter-spacing: 2px;
+  /* background: #fff url('https://cndevdemo.oss-cn-shanghai.aliyuncs.com/images/mobile-design/bg-subapps.png') center center no-repeat; */
+}
+
+.no-data-subapps::after {
+  content: attr(data-no-subapps);
+
 }
 
 .no-data-allapps {
-  background: #fff url('https://cndevdemo.oss-cn-shanghai.aliyuncs.com/images/mobile-design/bg-allapps.png') center
-    center no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  color: #dcdcdc;
+  font-size: 16px;
+  letter-spacing: 2px;
+  /* background: #fff url('https://cndevdemo.oss-cn-shanghai.aliyuncs.com/images/mobile-design/bg-allapps.png') center center no-repeat; */
+}
+
+.no-data-allapps::after {
+  content: attr(data-no-apps);
 }
 
 .loading-img {

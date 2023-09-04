@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       value: '',
-      hint: '请输入搜索关键词',
+      hint: this.$t("KintoneSearch.hint"),
     }
   },
   methods: {

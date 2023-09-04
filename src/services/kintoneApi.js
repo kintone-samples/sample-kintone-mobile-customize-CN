@@ -1,4 +1,3 @@
-// 获取空间应用列表
 export const GetSpaceAppsInfo = async (id, isGuest) => {
   const spaceInfo = await GetSpaceInfo(id, isGuest).catch(() => {})
   const appIds = spaceInfo.attachedApps.map((app) => app.appId)
@@ -29,7 +28,14 @@ export const GetMySpacesWithApps = async (offset, size) => {
   const mySpaces = await GetMySpacesList(offset, size).catch(() => {})
   const { spaceList, hasMore } = mySpaces
   const promiseArray = spaceList.map((item) => {
-    return GetSpaceAppsInfo(item.id, item.isGuest)
+    const { id, isGuest } = item
+    const appIds = item.attachedApps.map((app) => app.appId)
+    return GetAppInfo(appIds, isGuest, id)
+      .then((appsInfo) => {
+        item.apps = appsInfo
+        return item
+      })
+      .catch(() => {})
   })
   return Promise.all(promiseArray)
     .then((spaceAppsArray) => {
@@ -120,17 +126,6 @@ export const UpdateRecord = (app, updateKey, record) => {
   return kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', body)
 }
 
-// 通过$id更新记录
-export const UpdateRecordById = (app, id, record) => {
-  const body = {
-    app,
-    id,
-    record,
-  }
-
-  return kintone.api(kintone.api.url('/k/v1/record.json', true), 'PUT', body)
-}
-
 //添加一条记录
 export const AddRecord = (app, record) => {
   const body = {
@@ -201,4 +196,20 @@ export const GetStatus = (app) => {
     app,
   }
   return kintone.api(kintone.api.url('/k/v1/app/status.json', true), 'GET', body)
+}
+
+//获取流程设置
+export const GetOneAppInfo = (id) => {
+  const body = {
+    id,
+  }
+  return kintone.api(kintone.api.url('/k/v1/app.json', true), 'GET', body)
+}
+
+//获取表单设置
+export const GetFormFields = (app) => {
+  const body = {
+    app,
+  }
+  return kintone.api(kintone.api.url('/k/v1/app/form/fields.json', true), 'GET', body)
 }

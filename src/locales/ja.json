@@ -1,0 +1,57 @@
+{
+  "AppsDraggable": {
+    "allApps": "すべてのアプリ",
+    "homeShow": "ポータルのアプリ",
+    "noApps": "アプリはありません",
+    "noSubApps": "すべてのアプリからアプリを追加"
+  },
+  "ErrorInfo": {
+    "failedRetry": "リクエストに失敗しました。リロードしてください。",
+    "requestFailed": "リクエストに失敗しました。"
+  },
+  "Home": {
+    "gridApps": {
+      "allApps": "さらに表示"
+    },
+    "statistics": {
+      "eachSalesVolume": "各プラットフォームの売上データ",
+      "profit": "純利益",
+      "shoppingDaySalesVolume": "11.11 の売上",
+      "totalSalesVolume": "総売上高",
+      "unit": "万円"
+    }
+  },
+  "KintoneSearch": {
+    "hint": "検索キーワードを入力"
+  },
+  "SpaceList": {
+    "noMore": "全て表示済み"
+  },
+  "Star": {
+    "apps": "応用",
+    "noBookmarks": "まだブックマークはありません",
+    "other": "他の",
+    "recordDetail": "レコードの詳細",
+    "recordList": "レコードリスト",
+    "searchResult": "の検索結果"
+  },
+  "Tab": {
+    "contacts": "アドレス帳",
+    "home": "ポータル",
+    "space": "スペース",
+    "star": "お気に入り",
+    "todo": "To Do"
+  },
+  "Todo": {
+    "myCalendar": "スケジュール",
+    "todo": "未処理"
+  },
+  "TodoAssigned": {
+    "noTodo": "保留中はありません"
+  },
+  "TodoCalendarList": {
+    "myCalendar": "スケジュール",
+    "noCalendar": "スケジュールはありません",
+    "share": "共有"
+  }
+}

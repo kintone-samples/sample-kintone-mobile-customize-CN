@@ -1,15 +1,24 @@
 <template>
-  <div ref="barcharts" class="echarts-bar-charts"></div>
+  <v-chart class="echarts-bar-charts" :option="option" />
 </template>
 
 <script>
-import { GetRecords } from '@/services/kintoneApi'
+import { GetOneAppInfo, GetRecords, GetFormFields } from '@/services/kintoneApi'
 import { config } from '@/config'
 
+import {
+  useEChartOption,
+  DimensionType,
+  MetricType,
+} from 'echarts-composables'
+
+
 const app = config.barCharts
-const query = 'order by date asc limit 7'
+const query = 'order by month asc limit 11'
 
 export default {
+  name: "BarCharts",
+
   data() {
     return {
       option: {},
@@ -25,93 +34,112 @@ export default {
     setTotalCount() {
       this.$emit('newcount', this.total)
     },
-    initEcharts() {
-      GetRecords(app, query)
-        .then((resp) => {
-          const { records } = resp
-          const xDate = ['京东', '淘宝', '拼多多', '天猫', '考拉']
-          const ySales = [0, 0, 0, 0, 0]
-          // eslint-disable-next-line no-restricted-syntax
-          for (const record of records) {
-            ySales[0] += parseInt(record.channel1.value, 10)
-            ySales[1] += parseInt(record.channel2.value, 10)
-            ySales[2] += parseInt(record.channel3.value, 10)
-            ySales[3] += parseInt(record.channel4.value, 10)
-            ySales[4] += parseInt(record.channel5.value, 10)
-            if (record.date.value === '2019-11-11') {
-              this.total.quantity2 =
-                parseInt(record.channel1.value, 10) +
-                parseInt(record.channel2.value, 10) +
-                parseInt(record.channel3.value, 10) +
-                parseInt(record.channel4.value, 10) +
-                parseInt(record.channel5.value, 10)
-            }
-          }
-          this.total.quantity = ySales.reduce((x, y) => x + y)
-          this.total.profit = Number(this.total.quantity) * 0.3
-          this.setTotalCount()
-          this.option = {
-            grid: {
-              height: 50,
-              top: 10,
-              left: -5,
-            },
-            tooltip: {
-              trigger: 'axis',
-              axisPointer: {
-                // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-              },
-            },
-            // title: {
-            //   left: 'left',
-            //   text: '各渠道总销售额',
-            // },
-            xAxis: {
-              type: 'category',
-              data: xDate,
-              axisTick: {
-                alignWithLabel: true,
-                show: false,
-              },
-              axisLine: {
-                show: false,
-              },
-              axisLabel: {
-                interval: 0,
-                color: '#5c6168',
-                fontSize: 10,
-              },
-              offset: 2,
-              boundaryGap: true,
-              max: 5,
-            },
-            yAxis: {
-              type: 'value',
-              show: false,
-            },
-            series: [
-              {
-                itemStyle: {
-                  color: '#76a1c2',
-                  shadowBlur: 0,
-                  borderRadius: 3,
-                },
-                data: ySales,
-                type: 'bar',
-                showBackground: true,
-                backgroundStyle: {
-                  color: '#eaedf1',
-                  borderRadius: 3,
-                },
-                barWidth: 15,
-              },
-            ],
-          }
-          const myEcharts = this.$echarts.init(this.$refs.barcharts)
-          myEcharts.setOption(this.option)
-        })
-        .catch(() => {})
+
+    async initEcharts() {
+
+      const dimensions = [
+        {
+          key: 'name',
+          visual: DimensionType.CategoryAxis,
+        },
+      ]
+
+      const metrics = [
+        {
+          key: 'value',
+          visual: MetricType.Bar,
+        },
+      ]
+
+      const meta = [
+        { key: 'channel1', alias: 'Garoon' },
+        { key: 'channel2', alias: 'Mailwise' },
+        { key: 'channel3', alias: 'kintone' },
+        { key: 'channel4', alias: 'Office' },
+      ]
+
+      const resp = await GetRecords(app, query)
+      const appInfo = await GetOneAppInfo(app)
+
+      //通过表单设置获取单位，产品名称
+      // const formSetting = await GetFormFields(app)
+      const { records } = resp
+      // console.log(records)
+
+      let dataset = [
+        { value: 0, name: 'Garoon' },
+        { value: 0, name: 'Mailwise' },
+        { value: 0, name: 'kintone' },
+        { value: 0, name: 'Office' },
+      ]
+
+      for (const item of records) {
+        const { channel1, channel2, channel3, channel4 } = item
+        dataset[0].value += parseInt(channel1.value, 10)
+        dataset[1].value += parseInt(channel2.value, 10)
+        dataset[2].value += parseInt(channel3.value, 10)
+        dataset[3].value += parseInt(channel4.value, 10)
+        if (item.month.value === 'Nov.') {
+          this.total.quantity2 =
+            parseInt(channel1.value, 10) +
+            parseInt(channel2.value, 10) +
+            parseInt(channel3.value, 10) +
+            parseInt(channel4.value, 10)
+        }
+      }
+
+      // console.log('dataset', dataset)
+
+      this.total.quantity = 0
+      for (const item of dataset) {
+        this.total.quantity += Number(item.value)
+      }
+
+      // console.log(this.total.quantity)
+      const profit = Number(this.total.quantity) * 0.3
+      // console.log(profit)
+      this.total.profit = profit
+      this.setTotalCount()
+
+      const addons = [
+        // useBarStack()
+      ]
+
+      const echartsOptions = useEChartOption({
+        dataset, dimensions, metrics, meta, addons
+      })
+      echartsOptions.grid = {
+        height: 50,
+        top: 10,
+        left: -5,
+      }
+      echartsOptions.series[0].showBackground = true
+      echartsOptions.series[0].itemStyle = {
+        color: '#76a1c2',
+        shadowBlur: 0,
+        borderRadius: 3,
+      }
+
+      echartsOptions.series[0].backgroundStyle = {
+        color: '#eaedf1',
+        borderRadius: 3,
+      }
+      echartsOptions.series[0].barWidth = '40%'
+      echartsOptions.xAxis[0].axisTick = {
+        alignWithLabel: true,
+        show: false,
+      }
+      echartsOptions.xAxis[0].axisLine = {
+        show: false,
+      }
+      echartsOptions.xAxis[0].axisLabel = {
+        interval: 0,
+        color: '#5c6168',
+        fontSize: 10,
+      }
+      echartsOptions.yAxis[0].show = false
+      delete echartsOptions.legend
+      this.option = echartsOptions
     },
   },
 }

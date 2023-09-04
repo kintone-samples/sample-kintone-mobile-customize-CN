@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import '@/libs/vantUI'
 import '@/libs/cubeUI'
+import i18n from '@/libs/i18n'
 //百度统计,解决spa页面的统计问题
-import baiduAnalytics from 'vue-baidu-analytics'
-import echarts from '@/libs/echartsUI'
+// import baiduAnalytics from 'vue-baidu-analytics'
+// import echarts from '@/libs/echartsUI'
+import '@/libs/echarts'
 //瀑布流显示
 import waterfall from 'vue-waterfall2'
 import VCalendar from 'v-calendar'
@@ -18,7 +20,7 @@ import { config } from '@/config'
 Vue.use(Bounce)
 Vue.use(VCalendar)
 Vue.use(waterfall)
-Vue.prototype.$echarts = echarts
+// Vue.prototype.$echarts = echarts
 
 router.beforeEach((to, from, next) => {
   // to（当前页面） form（前一页面）
@@ -31,16 +33,17 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-Vue.use(baiduAnalytics, {
-  router: router,
-  siteIdList: [config.baiduTongjiSiteId],
-  isDebug: false,
-})
+// Vue.use(baiduAnalytics, {
+//   router: router,
+//   siteIdList: [config.baiduTongjiSiteId],
+//   isDebug: false,
+// })
 
 kintone.events.on('mobile.portal.show', (event) => {
   const contentSpaceElement = kintone.mobile.portal.getContentSpaceElement()
   Vue.config.productionTip = false
   new Vue({
+    i18n,
     router,
     store,
     render: (h) => h(App),

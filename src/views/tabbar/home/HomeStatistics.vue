@@ -1,30 +1,30 @@
 <template>
   <div>
     <div class="s-line"></div>
-    <van-row type="flex" align="bottom" class="statistics">
+    <van-row type="flex" align="bottom" class="statistics group-module-background">
       <van-col span="14">
-        <div class="statistics-title">各个平台的销售数据</div>
+        <div class="statistics-title">{{ $t("Home.statistics.eachSalesVolume") }}</div>
         <bar-charts @newcount="setTotal" />
       </van-col>
       <van-col span="10">
         <div class="statistics-data statistics-text s-bigFont">
-          +{{ total.quantity2 }}<span class="statistics-data-symbol">万元</span>
+          +{{ total.quantity2 }}<span class="statistics-data-symbol">{{ $t("Home.statistics.unit") }}</span>
         </div>
-        <div class="statistics-text">11.11销售额</div>
+        <div class="statistics-text">{{ $t("Home.statistics.shoppingDaySalesVolume") }}</div>
       </van-col>
     </van-row>
     <div class="s-line"></div>
-    <van-row type="flex" justify="space-between" class="statistics">
+    <van-row type="flex" justify="space-between" class="statistics group-module-background">
       <van-col>
-        <div class="statistics-title">总销售额</div>
+        <div class="statistics-title">{{ $t("Home.statistics.totalSalesVolume") }}</div>
         <div class="statistics-data">
-          {{ total.quantity | filterMoney }}<span class="statistics-data-symbol">万元</span>
+          {{ total.quantity | filterMoney }}<span class="statistics-data-symbol">{{ $t("Home.statistics.unit") }}</span>
         </div>
       </van-col>
       <van-col>
-        <div class="statistics-title">净利润</div>
+        <div class="statistics-title">{{ $t("Home.statistics.profit") }}</div>
         <div class="statistics-data">
-          {{ total.profit | filterMoney }}<span class="statistics-data-symbol">万元</span>
+          {{ total.profit | filterMoney }}<span class="statistics-data-symbol">{{ $t("Home.statistics.unit") }}</span>
         </div>
       </van-col>
     </van-row>
@@ -69,9 +69,9 @@ export default {
   padding: 20px;
   color: #5c6168;
   font-size: 12px;
-  background-color: #fff;
+  /* background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 0 5px 0 #ced3d4;
+  box-shadow: 0 0 5px 0 #ced3d4; */
 }
 
 .statistics-title {
