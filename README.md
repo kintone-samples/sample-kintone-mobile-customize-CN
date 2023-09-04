@@ -35,5 +35,4 @@ yarn build
 
 
 ## Screenshots
-![image](snapshots/home.png) ![image](snapshots/contacts.png) ![image](snapshots/space.png) ![image](snapshots/cards.png) ![image](snapshots/calendar.png) ![image](snapshots/todo.png)
-![image](snapshots/appDragDrop.png)
+![image](snapshots/home.png =x250) ![image](snapshots/contacts.png =x250) ![image](snapshots/space.png =x250) ![image](snapshots/cards.png =x250) ![image](snapshots/calendar.png =x250) ![image](snapshots/todo.png =x250)![image](snapshots/appDragDrop.png =x250)
