@@ -35,5 +35,5 @@ yarn build
 
 
 ## Screenshots
-![image](snapshots/home.png){ width=200px } ![image](snapshots/contacts.png){ width=200px } ![image](snapshots/space.png){ width=200px } ![image](snapshots/cards.png){ width=200px } ![image](snapshots/calendar.png){ width=200px } ![image](snapshots/todo.png){ width=200px }
-![image](snapshots/appDragDrop.png){ width=200px }
+<img src="snapshots/home.png" width="200" >  <img src="snapshots/contacts.png" width="200" >  <img src="snapshots/space.png" width="200" >
+<img src="snapshots/cards.png" width="200" >  <img src="snapshots/calendar.png" width="200" >  <img src="snapshots/todo.png" width="200" >  <img src="snapshots/appDragDrop.png" width="200" >
